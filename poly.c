@@ -234,6 +234,9 @@ int poly_binary_write(poly_data *cd, float delta, uint32_t nvals, float *vals)
 int poly_binary_parse(poly_data *cd, char *filename, float scale)
 {
     FILE *fp = fopen(filename, "rb");
+    if(fp == NULL) {
+        return 1;
+    }
     float delta, val;
     uint32_t nvals;
     uint32_t n;

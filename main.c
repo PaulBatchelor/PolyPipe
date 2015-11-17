@@ -87,13 +87,13 @@ static void write_binary()
     vals[1] = 0.2;
     poly_binary_write(&cd, 0, 2, vals);
     
-    //vals[0] = 67;
-    //vals[1] = 0.2;
-    //poly_binary_write(&cd, 0.5, 2, vals);
-    //
-    //vals[0] = 69;
-    //vals[1] = 0.2;
-    //poly_binary_write(&cd, 1.5, 2, vals);
+    vals[0] = 67;
+    vals[1] = 0.2;
+    poly_binary_write(&cd, 0.5, 2, vals);
+    
+    vals[0] = 69;
+    vals[1] = 0.2;
+    poly_binary_write(&cd, 1.5, 2, vals);
 
     poly_binary_close(&cd);
     poly_destroy(&cd);

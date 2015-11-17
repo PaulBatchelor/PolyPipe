@@ -103,18 +103,23 @@ int main()
     //    poly_pset(cd, 0, 69);
     //    poly_pset(cd, 1, 0.2);
 
-    poly_binary_parse(cd, "out.bin", 44100);
-    poly_end(cd);
-    int tmp; 
-    poly_cluster_init(clust, 3);
+    if(poly_binary_parse(cd, "test.bin", 44100) != 0) {
+        fprintf(stderr, "Could not find file!\n");    
+    } else {
+        poly_end(cd);
+        
+        int tmp; 
+        poly_cluster_init(clust, 3);
 
-    sp_process(sp, &ud, process);
+        sp_process(sp, &ud, process);
 
-    for(n = 0; n < 3; n++) {
-        basic_destroy(&ud.synth[n]);
+        for(n = 0; n < 3; n++) {
+            basic_destroy(&ud.synth[n]);
+        }
+
+        poly_cluster_destroy(clust);
     }
 
-    poly_cluster_destroy(clust);
     poly_destroy(cd);
     sp_destroy(&sp);
     return 0;
