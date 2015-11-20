@@ -10,7 +10,7 @@ LIBS += -lsoundpipe -lm -lsndfile
 make_file: main.c poly.o
 	gcc $(CFLAGS) $(LIBS) $< -o $@ poly.o
 
-sines: basic.c poly.o 
+sines: sines.c poly.o 
 	gcc $< $(CFLAGS) $(LIBS) -o $@  poly.o 
 
 clean:

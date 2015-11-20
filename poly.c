@@ -125,6 +125,8 @@ int poly_cluster_init(poly_cluster *clust, int nvals)
 int poly_cluster_destroy(poly_cluster *clust)
 {
     int n;
+    /* root ID. you don't want this */
+    clust->root.val = -999; 
     poly_voice *voice = clust->root.next;
     poly_voice *next;
     for(n = 0; n < clust->nvoices;n++) {
@@ -144,12 +146,13 @@ int poly_cluster_add(poly_cluster *clust, int *id)
         return 1;
     }
     *id = clust->stack[clust->pos - 1];
-    printf("Popping voice %d\n", *id);
+    printf("Popping free voice number %d from voicestack\n", *id);
     clust->pos--;
     clust->nvoices++;
 
     poly_voice *voice = malloc(sizeof(poly_voice));
     voice->val = *id;
+    voice->next = NULL;
 
     clust->last->next = voice;
     clust->last = voice;
@@ -160,31 +163,46 @@ int poly_cluster_remove(poly_cluster *clust, int id)
 {
     printf("Removing voice id %d\n", id);
     poly_voice *voice = clust->root.next;
-    poly_voice *last;
+    poly_voice *prev;
     poly_voice *next;
     int n;
 
+    printf("nvoices is %d\n", clust->nvoices);
     for(n = 0; n < clust->nvoices; n++) {
         next = voice->next;
+        printf("%d: voice->val = %d, target id %d\n", n, voice->val, id);
         if(voice->val == id) {
             printf("Found id %d at position %d\n", id, n);
             break;
         } else {
-            last = voice;
+            prev = voice;
             voice = next;
         }
     }
 
-    if(n == 0) {
+    printf("n is %d of %d\n", n, clust->nvoices);
+
+    if(clust->nvoices == 1) {
+        printf("--removing only voice in linked list...\n");
+        clust->last = &clust->root;
+        free(voice);
+    } else if(n == 0) {
+        printf("--removing first voice in linked list...\n");
+        /* (root) -> voice -> next to (root) -> next */
         clust->root.next = next;
-        free(voice);
+        free(voice);    
     } else if(n == clust->nvoices - 1) {
-        clust->last = last;
+        printf("--removing last voice in linked list...\n");
+        /* prev -> voice to prev -> NULL */
         free(voice);
+        prev->next = NULL;
     } else {
-        last->next = next;
+        /* prev -> voice -> next to prev -> next */
+        printf("--removing a voice in linked list...\n");
+        prev->next = next;
         free(voice);
     }
+
     clust->stack[clust->pos] = id;
     clust->nvoices--;
     clust->pos++;

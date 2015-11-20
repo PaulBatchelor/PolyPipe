@@ -27,7 +27,6 @@ func main() {
 	file, err := os.Create("../out.bin")
 	check(err)
 	defer file.Close()
-	//vals := []float32{62, 0.5}
 	WriteLine(file, 0, []float32{62, 0.1})
 	WriteLine(file, 0.5, []float32{64, 0.1})
 	WriteLine(file, 0.5, []float32{73, 0.1})

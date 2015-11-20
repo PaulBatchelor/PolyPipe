@@ -102,8 +102,8 @@ static void write_binary()
 int main() {
 
     //poly_demo_1();
-    //poly_demo_2();
-    write_binary();
+    poly_demo_2();
+    //write_binary();
 
     return 0;
 }
