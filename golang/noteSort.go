@@ -25,10 +25,12 @@ func (a ByAge) Less(i, j int) bool { return a[i].Start < a[j].Start }
 
 func DeltaTimes(notes []Note) {
 	var ptime float32 = 0
+	var oldtime float32 = 0
 	sort.Sort(ByAge(notes))
 	for i := 0; i < len(notes); i++ {
+		oldtime = notes[i].Start
 		notes[i].Start -= ptime
-		ptime = notes[i].Start
+		ptime = oldtime
 	}
 }
 
@@ -53,9 +55,10 @@ func WriteNotes(file *os.File, notes *[]Note) {
 
 func main() {
 	notes := []Note{
-		{0, []float32{2.0, 67, 0.1}},
-		{0.1, []float32{1.0, 62, 0.1}},
-		{0, []float32{2.0, 60, 0.1}},
+		{0, []float32{5.0, 60, 0.1}},
+		{1, []float32{4.0, 62, 0.1}},
+		{2, []float32{3.0, 71, 0.1}},
+		{3, []float32{2.0, 64, 0.1}},
 	}
 	fmt.Println(notes)
 	file, _ := os.Create("test.bin")
