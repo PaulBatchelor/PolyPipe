@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"fmt"
@@ -71,19 +72,26 @@ func StrToNote(str string) Note {
 }
 
 func main() {
-	//notes := []Note{
-	//	{0, []float32{5.0, 60, 0.1}},
-	//	{1, []float32{4.0, 62, 0.1}},
-	//	{2, []float32{3.0, 71, 0.1}},
-	//	{3, []float32{2.0, 64, 0.1}},
-	//}
 	var notes []Note
-	notes = append(notes, StrToNote("0 5.0 60 0.1"))
-	notes = append(notes, StrToNote("1 4.0 62 0.1"))
-	notes = append(notes, StrToNote("2 3.0 71 0.1"))
-	notes = append(notes, StrToNote("3 2.0 64 0.1"))
+	reader := bufio.NewReader(os.Stdin)
+	argv := os.Args
+	var filename string
+
+	if len(argv) != 2 {
+		filename = "test.bin"
+	} else {
+		filename = argv[1]
+	}
+	for {
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			break
+		} else {
+			notes = append(notes, StrToNote(strings.Trim(input, "\n")))
+		}
+	}
 	fmt.Println(notes)
-	file, _ := os.Create("test.bin")
+	file, _ := os.Create(filename)
 	defer file.Close()
 	WriteNotes(file, &notes)
 }
