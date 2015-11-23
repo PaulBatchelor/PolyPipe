@@ -130,11 +130,11 @@ int poly_cluster_destroy(poly_cluster *clust)
     clust->root.val = -999; 
     poly_voice *voice = clust->root.next;
     poly_voice *next;
-    for(n = 0; n < clust->nvoices;n++) {
-        next = voice->next;
-        free(voice);
-        voice = next;
-    }
+    //for(n = 0; n < clust->nvoices;n++) {
+    //    next = voice->next;
+    //    free(voice);
+    //    voice = next;
+    //}
     free(clust->stack);
     free(clust->voice);
     return 0; 
@@ -148,7 +148,9 @@ int poly_cluster_add(poly_cluster *clust, int *id)
         return 1;
     }
     *id = clust->stack[clust->pos - 1];
+#ifdef POLY_DEBUG
     printf("Popping free voice number %d from voicestack\n", *id);
+#endif
     clust->pos--;
     clust->nvoices++;
 
@@ -163,46 +165,60 @@ int poly_cluster_add(poly_cluster *clust, int *id)
 
 int poly_cluster_remove(poly_cluster *clust, int id)
 {
+#ifdef POLY_DEBUG
     printf("Removing voice id %d\n", id);
+#endif
     poly_voice *voice = clust->root.next;
     poly_voice *prev;
     poly_voice *next;
     int n;
 
+#ifdef POLY_DEBUG
     printf("nvoices is %d\n", clust->nvoices);
+#endif
+
     for(n = 0; n < clust->nvoices; n++) {
         next = voice->next;
+#ifdef POLY_DEBUG
         printf("%d: voice->val = %d, target id %d\n", n, voice->val, id);
+#endif
         if(voice->val == id) {
+#ifdef POLY_DEBUG
             printf("Found id %d at position %d\n", id, n);
+#endif
             break;
         } else {
             prev = voice;
             voice = next;
         }
     }
-
+#ifdef POLY_DEBUG
     printf("n is %d of %d\n", n, clust->nvoices);
+#endif
 
     if(clust->nvoices == 1) {
+#ifdef POLY_DEBUG
         printf("--removing only voice in linked list...\n");
+#endif
         clust->last = &clust->root;
-        //free(voice);
     } else if(n == 0) {
+#ifdef POLY_DEBUG
         printf("--removing first voice in linked list...\n");
+#endif
         /* (root) -> voice -> next to (root) -> next */
         clust->root.next = next;
-        //free(voice);    
     } else if(n == clust->nvoices - 1) {
+#ifdef POLY_DEBUG
         printf("--removing last voice in linked list...\n");
+#endif
         /* prev -> voice to prev -> NULL */
-        //free(voice);
         prev->next = NULL;
     } else {
         /* prev -> voice -> next to prev -> next */
+#ifdef POLY_DEBUG
         printf("--removing a voice in linked list...\n");
+#endif
         prev->next = next;
-        //free(voice);
     }
 
     clust->stack[clust->pos] = id;
@@ -267,14 +283,19 @@ int poly_binary_parse(poly_data *cd, char *filename, float scale)
         if(feof(fp)){
             break;
         }
-
+#ifdef POLY_DEBUG
         printf("reading delta value of %g\n", delta);
+#endif
         fread(&nvals, sizeof(uint32_t), 1, fp);
+#ifdef POLY_DEBUG
         printf("reading %d nvals\n", nvals);
+#endif
         poly_add(cd, (uint32_t) scale * delta, nvals);
         for(n = 0; n < nvals; n++) {
             fread(&val, sizeof(float), 1, fp);
+#ifdef POLY_DEBUG
             printf("---- reading %g\n", val);
+#endif
             poly_pset(cd, n, val);
         }
 
