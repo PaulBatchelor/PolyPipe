@@ -2,7 +2,8 @@
 # You will need to compile and install the NRT parser, found here:
 # http://www.github.com/PaulBatchelor/NRT.git
 
-notes="d2r4t2."
+#notes="d2r4t2."
+notes="(dms)(rfl)m8fs"
 bpm=120
 
 scaleTempo() {

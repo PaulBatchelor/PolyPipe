@@ -112,6 +112,7 @@ int poly_cluster_init(poly_cluster *clust, int nvals)
 {
     int n;
     clust->stack = malloc(sizeof(float) * nvals);
+    clust->voice = malloc(sizeof(poly_voice) * nvals);
     clust->pos = nvals;
     clust->total_voices = nvals;
     clust->nvoices = 0;
@@ -135,6 +136,7 @@ int poly_cluster_destroy(poly_cluster *clust)
         voice = next;
     }
     free(clust->stack);
+    free(clust->voice);
     return 0; 
 }
 
@@ -150,7 +152,7 @@ int poly_cluster_add(poly_cluster *clust, int *id)
     clust->pos--;
     clust->nvoices++;
 
-    poly_voice *voice = malloc(sizeof(poly_voice));
+    poly_voice *voice = &clust->voice[clust->nvoices - 1];
     voice->val = *id;
     voice->next = NULL;
 
@@ -185,22 +187,22 @@ int poly_cluster_remove(poly_cluster *clust, int id)
     if(clust->nvoices == 1) {
         printf("--removing only voice in linked list...\n");
         clust->last = &clust->root;
-        free(voice);
+        //free(voice);
     } else if(n == 0) {
         printf("--removing first voice in linked list...\n");
         /* (root) -> voice -> next to (root) -> next */
         clust->root.next = next;
-        free(voice);    
+        //free(voice);    
     } else if(n == clust->nvoices - 1) {
         printf("--removing last voice in linked list...\n");
         /* prev -> voice to prev -> NULL */
-        free(voice);
+        //free(voice);
         prev->next = NULL;
     } else {
         /* prev -> voice -> next to prev -> next */
         printf("--removing a voice in linked list...\n");
         prev->next = next;
-        free(voice);
+        //free(voice);
     }
 
     clust->stack[clust->pos] = id;

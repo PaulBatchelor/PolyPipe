@@ -31,6 +31,7 @@ typedef struct poly_voice {
 
 
 typedef struct {
+    poly_voice *voice;
     poly_voice root;
     poly_voice *last;
     poly_voice *tmp;
