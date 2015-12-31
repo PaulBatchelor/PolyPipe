@@ -3,7 +3,8 @@
 # http://www.github.com/PaulBatchelor/NRT.git
 
 #notes="d2r4t2."
-notes="(dms)(rfl)m8fs"
+notes="[dm-fs dsm-][D2]"
+#notes="drmfs"
 bpm=120
 
 scaleTempo() {
@@ -15,5 +16,5 @@ toBin() {
     ./str2poly score.bin
 }
 
-echo $notes | nrt | scaleTempo 120 | toBin
+echo $notes | nrt | scaleTempo 120 
 

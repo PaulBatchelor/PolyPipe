@@ -40,7 +40,7 @@ func DeltaTimes(notes []Note) {
 func WriteLine(file *os.File, delta float32, vals []float32) {
 	d1 := new(bytes.Buffer)
 	binary.Write(d1, binary.LittleEndian, delta)
-	binary.Write(d1, binary.LittleEndian, uint32(len(vals)))
+	binary.Write(d1, binary.LittleEndian, uint16(len(vals)))
 	for _, elem := range vals {
 		binary.Write(d1, binary.LittleEndian, elem)
 	}

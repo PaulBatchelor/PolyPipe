@@ -44,7 +44,7 @@ poly_event * poly_itr_next(poly_data *cd)
     return evt;
 }
 
-int poly_add(poly_data *cd, uint32_t delta, uint32_t nvals)
+int poly_add(poly_data *cd, uint32_t delta, uint16_t nvals)
 {
     uint32_t n;
     poly_event *evt = malloc(sizeof(poly_event));
@@ -62,7 +62,6 @@ int poly_add(poly_data *cd, uint32_t delta, uint32_t nvals)
 
 int poly_compute(poly_data *cd)
 {
-    uint32_t n;
     poly_iterator *itr = &cd->itr;
     poly_event *evt;
     itr->root = cd->last;
@@ -125,11 +124,9 @@ int poly_cluster_init(poly_cluster *clust, int nvals)
 
 int poly_cluster_destroy(poly_cluster *clust)
 {
-    int n;
+    //int n;
     /* root ID. you don't want this */
     clust->root.val = -999; 
-    poly_voice *voice = clust->root.next;
-    poly_voice *next;
     //for(n = 0; n < clust->nvoices;n++) {
     //    next = voice->next;
     //    free(voice);
@@ -149,17 +146,23 @@ int poly_cluster_add(poly_cluster *clust, int *id)
     }
     *id = clust->stack[clust->pos - 1];
 #ifdef POLY_DEBUG
-    printf("Popping free voice number %d from voicestack\n", *id);
+    printf("Popping voice id %d from voicestack\n", *id);
 #endif
     clust->pos--;
     clust->nvoices++;
 
-    poly_voice *voice = &clust->voice[clust->nvoices - 1];
+    //poly_voice *voice = &clust->voice[clust->nvoices - 1];
+    poly_voice *voice = &clust->voice[*id];
     voice->val = *id;
     voice->next = NULL;
 
     clust->last->next = voice;
     clust->last = voice;
+
+#ifdef POLY_DEBUG
+    printf("There are now %d active voices\n", clust->nvoices);
+#endif
+
     return 0; 
 }
 
@@ -169,8 +172,8 @@ int poly_cluster_remove(poly_cluster *clust, int id)
     printf("Removing voice id %d\n", id);
 #endif
     poly_voice *voice = clust->root.next;
-    poly_voice *prev;
-    poly_voice *next;
+    poly_voice *prev = NULL;
+    poly_voice *next = NULL;
     int n;
 
 #ifdef POLY_DEBUG
@@ -257,12 +260,12 @@ int poly_binary_close(poly_data *cd)
     return 0;
 }
 
-int poly_binary_write(poly_data *cd, float delta, uint32_t nvals, float *vals)
+int poly_binary_write(poly_data *cd, float delta, uint16_t nvals, float *vals)
 {
     float *dp = &delta;
-    uint32_t *np = &nvals;
+    uint16_t *np = &nvals;
     fwrite(dp, sizeof(float), 1, cd->fp);
-    fwrite(np, sizeof(uint32_t), 1, cd->fp);
+    fwrite(np, sizeof(uint16_t), 1, cd->fp);
     fwrite(vals, sizeof(float), nvals, cd->fp);
     return 0;
 }
@@ -274,7 +277,7 @@ int poly_binary_parse(poly_data *cd, char *filename, float scale)
         return 1;
     }
     float delta, val;
-    uint32_t nvals;
+    uint16_t nvals;
     uint32_t n;
     while(1){
 
@@ -286,7 +289,7 @@ int poly_binary_parse(poly_data *cd, char *filename, float scale)
 #ifdef POLY_DEBUG
         printf("reading delta value of %g\n", delta);
 #endif
-        fread(&nvals, sizeof(uint32_t), 1, fp);
+        fread(&nvals, sizeof(uint16_t), 1, fp);
 #ifdef POLY_DEBUG
         printf("reading %d nvals\n", nvals);
 #endif
